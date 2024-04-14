@@ -50,6 +50,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private EGender eGender;
 
+    @Column(name = "nickname")
+    private String nickname;
+
     @Builder
     public User(String socialId, EProvider provider, ERole eRole) {
         this.socialId = socialId;
@@ -65,6 +68,7 @@ public class User {
     public void register(RegisterRequestDto registerRequestDto) {
         this.age = registerRequestDto.age();
         this.eGender = registerRequestDto.gender();
+        this.nickname = registerRequestDto.nickname();
     }
 
 }
