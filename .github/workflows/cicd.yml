@@ -53,7 +53,7 @@ jobs:
         with:
           host: 106.10.38.53
           username: root
-          password: withpeace!!
+          password: habit
           port: 2223
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
