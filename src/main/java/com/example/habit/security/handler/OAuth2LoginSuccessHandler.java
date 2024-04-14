@@ -39,13 +39,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         JwtTokenDto jwtTokenDto = jwtUtil.generateTokens(userPrincipal.getId(), userPrincipal.getRole());
 
         CookieUtil.addCookie(response, Constant.AUTHORIZATION, jwtTokenDto.getAccessToken());
+        CookieUtil.addCookie(response, "role", userPrincipal.getRole().toString());
 
         // Guest 즉, 소셜로그인으로 방금 가입한 유저는 따로 로직 분류
 
         if (userPrincipal.getRole().equals(ERole.GUEST)) {
-            response.sendRedirect( "http://localhost/auth/register");
+            response.sendRedirect( "http://localhost:3000/register");
         } else {
-            response.sendRedirect("http://localhost");
+            response.sendRedirect("http://localhost:3000/register");
         }
 
     }
