@@ -50,7 +50,7 @@ spring:
             client-id: "85991f750346c2f166a4ce6d39bd0194"
             client-secret: "8njdbJLAqiQCSHz1wO6XCI2s9ZXQQdun"
             client-authentication-method: client_secret_post
-            redirect-uri: 115.85.181.188:8080/login/oauth2/code/kakao
+            redirect-uri: http://115.85.181.188:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
