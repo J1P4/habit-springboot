@@ -39,7 +39,7 @@ jobs:
 
       # Docker build & push to prod
       - name: Docker build & push to prod
-        if: contains(github.ref, 'dev')
+        if: contains(github.ref, 'master')
         run: |
           docker login -u chanjin -p as199231!
           docker build -t chanjin/habit .
@@ -49,7 +49,7 @@ jobs:
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
         id: deploy-prod
-        if: contains(github.ref, 'dev')
+        if: contains(github.ref, 'master')
         with:
           host: 106.10.38.53
           username: root
