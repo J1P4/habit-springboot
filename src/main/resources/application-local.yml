@@ -81,10 +81,3 @@ spring:
             redirect-uri: http://localhost:8080/login/oauth2/code/github
 
 jwt.secret: uefrfjr8ew9jfejwr9ejf8w3h4j98fj8e94fhorg9hn3owth48hqf384ohtgfu34oqh8w9th438r2j3490rfj2
-
-server:
-  servlet:
-    session:
-      cookie:
-        domain: localhost
-        same-site: none
