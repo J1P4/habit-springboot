@@ -12,11 +12,8 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 허용할 오리진 설정
-        configuration.addAllowedOrigin("https://habit-fe-gyumongs-projects.vercel.app");
-        configuration.addAllowedOrigin("http://localhost:3000");
-
         configuration.setAllowCredentials(true);
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
 
