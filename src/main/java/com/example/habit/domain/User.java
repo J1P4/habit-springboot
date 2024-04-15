@@ -1,7 +1,6 @@
 package com.example.habit.domain;
 
 
-
 import com.example.habit.dto.request.RegisterRequestDto;
 import com.example.habit.type.EGender;
 import com.example.habit.type.EProvider;
@@ -14,6 +13,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -53,6 +54,17 @@ public class User {
     @Column(name = "nickname")
     private String nickname;
 
+    @Column(name = "height")
+    private int height;
+
+    @Column(name = "weight")
+    private int weight;
+
+    // 1:N
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<History> historyList = new ArrayList<>();
+
     @Builder
     public User(String socialId, EProvider provider, ERole eRole) {
         this.socialId = socialId;
@@ -69,6 +81,8 @@ public class User {
         this.age = registerRequestDto.age();
         this.eGender = registerRequestDto.gender();
         this.nickname = registerRequestDto.nickname();
+        this.height = registerRequestDto.height();
+        this.weight = registerRequestDto.weight();
     }
 
 }
