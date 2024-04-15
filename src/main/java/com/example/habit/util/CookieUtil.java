@@ -7,20 +7,23 @@ import java.util.Optional;
 
 public class CookieUtil {
 
-    private static final Integer DEFAULT_MAX_AGE = 60*60*24;
-    public static Optional<Cookie> getCookie(){
+    private static final Integer DEFAULT_MAX_AGE = 60 * 60 * 24;
+
+    public static Optional<Cookie> getCookie() {
         return Optional.empty();
     }
-    public static void addCookie(HttpServletResponse response, String name, String value){
-        Cookie cookie = new Cookie(name,value);
+
+    public static void addCookie(HttpServletResponse response, String name, String value) {
+        Cookie cookie = new Cookie(name, value);
         // 전역 사용
-        cookie.setPath("/");;
+        cookie.setPath("/");
+        ;
 
         response.addCookie(cookie);
     }
 
-    public static void addSecureCookie(HttpServletResponse response,String name, String value){
-        Cookie cookie = new Cookie(name,value);
+    public static void addSecureCookie(HttpServletResponse response, String name, String value) {
+        Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
