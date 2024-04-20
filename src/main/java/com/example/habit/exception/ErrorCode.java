@@ -35,6 +35,8 @@ public enum ErrorCode {
     ACCESS_DENIED_ERROR(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     // Not Found Error
     NOT_FOUND_USER(40401, HttpStatus.NOT_FOUND, "해당 사용자가 존재하지 않습니다."),
+    NOT_FOUND_FOOD(40402, HttpStatus.NOT_FOUND, "해당 음식이 존재하지 않습니다."),
+    NOT_FOUND_HISTORY(40403, HttpStatus.NOT_FOUND, "해당 기록이 존재하지 않습니다."),
 
     SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러 입니다."),
     AUTH_SERVER_USER_INFO_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "인증 서버 사용자 정보 조회에 실패하였습니다.");

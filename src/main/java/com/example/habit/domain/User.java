@@ -62,7 +62,7 @@ public class User {
 
     // 1:N
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<History> historyList = new ArrayList<>();
 
     @Builder

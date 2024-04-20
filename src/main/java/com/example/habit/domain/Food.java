@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -77,4 +80,7 @@ public class Food {
     //비타민C
     @Column(name = "vitamin_c")
     private float vitaminC = 0;
+
+    @OneToMany(mappedBy = "food",fetch = FetchType.LAZY)
+    private List<History> historyList = new ArrayList<>();
 }
