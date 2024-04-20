@@ -51,7 +51,7 @@ jobs:
         id: deploy-prod
         if: contains(github.ref, 'master')
         with:
-          host: 49.50.166.156
+          host: 106.10.38.53
           username: root
           password: habit
           port: 2223
