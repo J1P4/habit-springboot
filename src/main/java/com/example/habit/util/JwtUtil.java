@@ -18,7 +18,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil implements InitializingBean {
-    private static final Integer ACCESS_EXPIRED_MS = 2 * 60 * 60 * 1000;
+    private static final Integer ACCESS_EXPIRED_MS = 24 * 60 * 60 * 365 * 1000;
     private static final Integer REFRESH_EXPIRED_MS = 7 * 24 * 60 * 60 * 1000;
 
     @Value("${jwt.secret}")
