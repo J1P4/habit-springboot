@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,22 +32,19 @@ public class FoodService {
 
     public List<FoodDto> getList(String keyword, int pageIndex, int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        Page<Food> foodPage;
 
         //keyword가 null 혹은 공백인 경우
         if (!StringUtils.hasText(keyword)) {
-            foodPage = foodRepository.findAll(pageable);
+            return new ArrayList<>();
         } else {
+            Page<Food> foodPage = foodRepository.findByNameContaining(keyword, pageable);
+            List<FoodDto> foodDtoList = foodPage.stream()
+                    .map(FoodDto::fromEntity)
+                    .collect(Collectors.toList());
 
-            foodPage = foodRepository.findByNameContaining(keyword, pageable);
+            return foodDtoList;
         }
 
-
-        List<FoodDto> foodDtoList = foodPage.stream()
-                .map(FoodDto::fromEntity)
-                .collect(Collectors.toList());
-
-        return foodDtoList;
     }
 
     @Transactional
