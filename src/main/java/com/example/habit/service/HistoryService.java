@@ -32,29 +32,32 @@ public class HistoryService {
         User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
         List<History> histories = historyRepository.findAllByUser(user);
 
-        HashMap<LocalDate,List<History>> historyMap = new HashMap<>();
+        HashMap<LocalDate, List<History>> historyMap = new HashMap<>();
 
-        for(History history : histories){
+        for (History history : histories) {
             LocalDate date = history.getAteDate().toLocalDate();
-            if(historyMap.containsKey(date)){
+            if (historyMap.containsKey(date)) {
                 historyMap.get(date).add(history);
-            }else{
+            } else {
                 List<History> historyList = new ArrayList<>();
                 historyList.add(history);
-                historyMap.put(date,historyList);
+                historyMap.put(date, historyList);
             }
         }
 
         List<HistoriesDto> historyDtos = new ArrayList<>();
 
         Set<LocalDate> keySet = historyMap.keySet();
-        for(LocalDate date : keySet){
+        for (LocalDate date : keySet) {
             List<HistoryDto> historyList = new ArrayList<>();
-            for(History history : historyMap.get(date)){
+            History total = History.getZeroHistory();
+
+            for (History history : historyMap.get(date)) {
                 historyList.add(HistoryDto.fromEntity(history));
+                total.plus(history);
             }
 
-            historyDtos.add(new HistoriesDto(date.toString(),historyList));
+            historyDtos.add(new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList));
         }
 
         return historyDtos;
@@ -70,16 +73,17 @@ public class HistoryService {
 
         List<HistoryDto> historyList = new ArrayList<>();
 
-        for(History history : histories){
+        History total = History.getZeroHistory();
+
+        for (History history : histories) {
             historyList.add(HistoryDto.fromEntity(history));
+            total.plus(history);
         }
 
-        HistoriesDto historiesDto = new HistoriesDto(date.toString(),historyList);
+        HistoriesDto historiesDto = new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList);
 
         return historiesDto;
     }
-
-
 
     @Transactional
     public Boolean update(Long userId, HistoryRequestDto historyRequestDto) {

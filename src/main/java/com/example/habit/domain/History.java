@@ -112,7 +112,7 @@ public class History {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void update(HistoryRequestDto historyRequestDto){
+    public void update(HistoryRequestDto historyRequestDto) {
         this.energy = historyRequestDto.energy();
         this.moisture = historyRequestDto.moisture();
         this.protein = historyRequestDto.protein();
@@ -128,6 +128,43 @@ public class History {
         this.vitaminB1 = historyRequestDto.vitaminB1();
         this.vitaminB2 = historyRequestDto.vitaminB2();
         this.vitaminC = historyRequestDto.vitaminC();
+    }
+
+    public static History getZeroHistory() {
+        return History.builder()
+                .energy(0)
+                .protein(0)
+                .fat(0)
+                .carbohydrate(0)
+                .dietaryFiber(0)
+                .calcium(0)
+                .iron(0)
+                .phosphorus(0)
+                .selenium(0)
+                .sodium(0)
+                .vitaminA(0)
+                .vitaminB1(0)
+                .vitaminB2(0)
+                .vitaminC(0)
+                .food(new Food())
+                .build();
+    }
+
+    public void plus(History history) {
+        this.energy += history.getEnergy();
+        this.protein += history.getProtein();
+        this.fat += history.getFat();
+        this.carbohydrate += history.getCarbohydrate();
+        this.dietaryFiber += history.getDietaryFiber();
+        this.calcium += history.getCalcium();
+        this.iron += history.getIron();
+        this.phosphorus += history.getPhosphorus();
+        this.selenium += history.getSelenium();
+        this.sodium += history.getSodium();
+        this.vitaminA += history.getVitaminA();
+        this.vitaminB1 += history.getVitaminB1();
+        this.vitaminB2 += history.getVitaminB2();
+        this.vitaminC += history.getVitaminC();
     }
 
 }
