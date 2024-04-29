@@ -4,6 +4,8 @@ import com.example.habit.domain.Food;
 import com.example.habit.domain.History;
 import com.example.habit.domain.User;
 import com.example.habit.dto.response.FoodDto;
+import com.example.habit.dto.response.FoodNutrientSumDto;
+import com.example.habit.dto.response.FoodsForNutrient;
 import com.example.habit.exception.CommonException;
 import com.example.habit.exception.ErrorCode;
 import com.example.habit.repository.FoodRepository;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,5 +80,25 @@ public class FoodService {
         historyRepository.save(history);
 
         return Boolean.TRUE;
+    }
+
+    //부족한 영양분에 맞는 음식 리스트
+    @Transactional
+    public List<FoodsForNutrient> getFoodListWithNutrient(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        LocalDate now = LocalDate.now();
+
+        FoodNutrientSumDto sumOfNutrient = historyRepository.findSumNutrientByUserAndAteDate(user, now);
+
+        List<FoodsForNutrient> foodList = null;
+
+        if (sumOfNutrient.carbohydrate() + sumOfNutrient.protein() + sumOfNutrient.fat() > 0) { //로그 존재하면 영양분에 맞게 10개
+            //사용자 성별, 키, 몸무게에 맞는 필요영양분에서 사용자가 섭취한 영양분을 뺀다.
+            foodList = foodRepository.findFoodsByNutrient(sumOfNutrient.carbohydrate(), sumOfNutrient.protein(), sumOfNutrient.fat());
+        }
+        if (foodList == null || foodList.size() == 0) //로그가 없거나 추천을 못했으면 랜덤으로 10개
+            foodList = foodRepository.findFoodbyRandom();
+
+        return foodList;
     }
 }
