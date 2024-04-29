@@ -3,6 +3,7 @@ package com.example.habit.service;
 import com.example.habit.domain.Food;
 import com.example.habit.domain.History;
 import com.example.habit.domain.User;
+import com.example.habit.dto.response.FoodAIDto;
 import com.example.habit.dto.response.FoodDto;
 import com.example.habit.dto.response.FoodNutrientSumDto;
 import com.example.habit.dto.response.FoodsForNutrient;
@@ -11,27 +12,41 @@ import com.example.habit.exception.ErrorCode;
 import com.example.habit.repository.FoodRepository;
 import com.example.habit.repository.HistoryRepository;
 import com.example.habit.repository.UserRepository;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FoodService {
+    @Value("http://localhost:8000/recommend_food/")
+    private String ML_RECOMMENDER_URL;
+
     private final FoodRepository foodRepository;
     private final UserRepository userRepository;
-
     private final HistoryRepository historyRepository;
+    private static final RestTemplate restTemplate = new RestTemplate();
 
     public List<FoodDto> getList(String keyword, int pageIndex, int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
@@ -101,4 +116,60 @@ public class FoodService {
 
         return foodList;
     }
+
+    //AI 이용한 음식 추천
+
+    @Transactional
+    public Boolean getRecommendFoodList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        LocalDate now = LocalDate.now();
+
+        //로그 없는 경우 해야함
+
+        //사용자가 오늘 먹은 음식 리스트
+        List<HistoryRepository.FoodAIInfo> userlogsforAI = historyRepository.findFoodByUserAndAteDate(user.getId(), now);
+        log.info("userlogsforAI");
+        for (HistoryRepository.FoodAIInfo foodAIInfo : userlogsforAI) {
+            log.info(foodAIInfo.getFoodId() + " " + foodAIInfo.getName() + " " + foodAIInfo.getDetailClassification());
+        }
+
+        List<FoodAIDto> userlogs = userlogsforAI.stream()
+                .map(FoodAIDto::fromFoodAIInfo)
+                .collect(Collectors.toList());
+
+        log.info("로그들");
+        log.info(userlogs.toString());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject body = new JSONObject();
+        body.put("userlogs", userlogs);
+
+        log.info("바디");
+        log.info(body.toJSONString());
+
+        HttpEntity<?> request = new HttpEntity<String>(body.toJSONString(), headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                ML_RECOMMENDER_URL,
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+
+        JsonArray foodIds = (JsonArray) JsonParser.parseString(response.getBody()).getAsJsonObject().get("foodlist");
+        log.info("결과 전");
+        log.info(foodIds.toString());
+
+        List<Long> list = new ArrayList<>();
+        log.info("결과");
+        for (JsonElement foodIdElement : foodIds) {
+            Long foodId = foodIdElement.getAsLong();
+            log.info(foodId.toString());
+            list.add(foodId);
+        }
+
+        return Boolean.TRUE;
+    }
+
 }
