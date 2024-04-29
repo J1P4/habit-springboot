@@ -30,4 +30,10 @@ public class FoodController {
         return ResponseDto.ok(foodService.addFood(foodRequestDto.foodId(), userId));
     }
 
+    @GetMapping("/recommend")
+    public ResponseDto<?> getRecommendFoodList(@UserId Long userId) {
+        return ResponseDto.ok(foodService.getRecommendFoodList(userId));
+    }
+
+
 }
