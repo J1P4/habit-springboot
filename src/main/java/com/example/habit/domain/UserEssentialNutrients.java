@@ -18,6 +18,9 @@ public class UserEssentialNutrients {
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
 
+    @Column(name = "energy")
+    private float energy = 0;
+
     @Column(name = "protein")
     private float protein = 0;
 
@@ -33,14 +36,16 @@ public class UserEssentialNutrients {
     private EssentialNutrients essentialNutrients;
 
     @Builder
-    public UserEssentialNutrients(float protein, float fat, float carbohydrate, EssentialNutrients essentialNutrients) {
+    public UserEssentialNutrients(float energy, float protein, float fat, float carbohydrate, EssentialNutrients essentialNutrients) {
+        this.energy = energy;
         this.protein = protein;
         this.fat = fat;
         this.carbohydrate = carbohydrate;
         this.essentialNutrients = essentialNutrients;
     }
 
-    public void updateUserEssentialNutrients(float protein, float fat, float carbohydrate, EssentialNutrients essentialNutrients) {
+    public void updateUserEssentialNutrients(float energy, float protein, float fat, float carbohydrate, EssentialNutrients essentialNutrients) {
+        this.energy = energy;
         this.protein = protein;
         this.fat = fat;
         this.carbohydrate = carbohydrate;
