@@ -120,7 +120,7 @@ public class FoodService {
     //AI 이용한 음식 추천
 
     @Transactional
-    public List<FoodAIDto> getRecommendFoodList(Long userId) {
+    public Map<String,List<FoodAIDto>> getRecommendFoodList(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
         LocalDate now = LocalDate.now();
 
@@ -160,8 +160,10 @@ public class FoodService {
             String category = foodElement.getAsJsonObject().get("category").getAsString();
             foodList.add(new FoodAIDto(foodId.intValue(), name, category));
         }
+        Map<String,List<FoodAIDto>> map = new HashMap<>();
+        map.put("foodlist",foodList);
 
-        return foodList;
+        return map;
     }
 
 }
