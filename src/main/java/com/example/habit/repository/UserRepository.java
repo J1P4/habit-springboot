@@ -5,6 +5,7 @@ import com.example.habit.type.EProvider;
 import com.example.habit.type.ERole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.socialId = :id AND u.eProvider = :provider")
-    Optional<UserSecurityForm> findBySocialIdAndEProvider(String id, EProvider provider);
+    Optional<UserSecurityForm> findBySocialIdAndEProvider(@Param("id") String id, @Param("provider") EProvider provider);
 
     interface UserSecurityForm {
 
