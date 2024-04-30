@@ -1,6 +1,5 @@
 package com.example.habit.service;
 
-
 import com.example.habit.domain.EssentialNutrients;
 import com.example.habit.domain.User;
 import com.example.habit.domain.UserEssentialNutrients;
@@ -34,11 +33,13 @@ public class AuthService {
         EssentialNutrients essentialNutrients = essentialNutrientsRepository.findByEGenderAndAge(registerRequestDto.gender(), registerRequestDto.age())
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_ESSENTIAL_NUTREINTS));
 
-        float bmr  = (float) ((registerRequestDto.gender() == EGender.FEMALE) ?
+        float bmr  = (float) (((registerRequestDto.gender() == EGender.FEMALE) ?
                         447.593 + (9.247 * registerRequestDto.weight()) + (3.098 * registerRequestDto.height()) - (4.330 - registerRequestDto.age()) :
-                        88.362 + (13.397 * registerRequestDto.weight()) + (4.799 * registerRequestDto.height()) - (5.677 - registerRequestDto.age()));
+                        88.362 + (13.397 * registerRequestDto.weight()) + (4.799 * registerRequestDto.height()) - (5.677 - registerRequestDto.age()))
+                        * 1.375);
 
         UserEssentialNutrients newUserEssentialNutrients = UserEssentialNutrients.builder()
+                .energy(bmr)
                 .carbohydrate((float) (bmr * 0.55))
                 .fat((float) (bmr * 0.25))
                 .protein(registerRequestDto.weight())
