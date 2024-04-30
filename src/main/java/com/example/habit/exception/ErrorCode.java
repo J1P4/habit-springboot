@@ -37,10 +37,11 @@ public enum ErrorCode {
     NOT_FOUND_USER(40401, HttpStatus.NOT_FOUND, "해당 사용자가 존재하지 않습니다."),
     NOT_FOUND_FOOD(40402, HttpStatus.NOT_FOUND, "해당 음식이 존재하지 않습니다."),
     NOT_FOUND_HISTORY(40403, HttpStatus.NOT_FOUND, "해당 기록이 존재하지 않습니다."),
+    NOT_FOUND_FOOD_FOR_NUTRIENT(40404, HttpStatus.NOT_FOUND, "영양 상태에 맞는 음식이 존재하지 않습니다."),
 
     SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러 입니다."),
-    AUTH_SERVER_USER_INFO_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "인증 서버 사용자 정보 조회에 실패하였습니다.");
-
+    AUTH_SERVER_USER_INFO_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "인증 서버 사용자 정보 조회에 실패하였습니다."),
+    REST_CLIENT_ERROR(50002,HttpStatus.INTERNAL_SERVER_ERROR, "서버 통신 에러입니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;

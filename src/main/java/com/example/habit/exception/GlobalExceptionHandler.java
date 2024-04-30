@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -65,6 +66,12 @@ public class GlobalExceptionHandler {
     public ResponseDto<?> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("Handler in DataIntegrityViolationException Error Message = " + e.getMessage());
         return ResponseDto.fail(new CommonException(ErrorCode.DUPLICATE_RESOURCE));
+    }
+
+    @ExceptionHandler(RestClientException.class)
+    public ResponseDto<?> handleRestClientException(RestClientException e) {
+        log.error("Handler in RestClientException Error Message = " + e.getMessage());
+        return ResponseDto.fail(new CommonException(ErrorCode.REST_CLIENT_ERROR));
     }
 
     @ExceptionHandler(CommonException.class)
