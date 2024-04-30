@@ -62,6 +62,6 @@ jobs:
             sudo docker stop springboot
             sudo docker rm -f springboot
             sudo docker pull chanjin/habit
-            sudo docker run -d -p 8080:8080 --name springboot --network=net chanjin/habit
+            sudo docker run -d -p 8080:8080 --name springboot --network=host chanjin/habit
             sudo docker image prune -f
 
