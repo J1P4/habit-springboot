@@ -120,7 +120,7 @@ public class FoodService {
     //AI 이용한 음식 추천
 
     @Transactional
-    public Boolean getRecommendFoodList(Long userId) {
+    public List<FoodAIDto> getRecommendFoodList(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
         LocalDate now = LocalDate.now();
 
@@ -128,25 +128,19 @@ public class FoodService {
 
         //사용자가 오늘 먹은 음식 리스트
         List<HistoryRepository.FoodAIInfo> userlogsforAI = historyRepository.findFoodByUserAndAteDate(user.getId(), now);
-        log.info("userlogsforAI");
-        for (HistoryRepository.FoodAIInfo foodAIInfo : userlogsforAI) {
-            log.info(foodAIInfo.getFoodId() + " " + foodAIInfo.getName() + " " + foodAIInfo.getDetailClassification());
-        }
+
+        if (userlogsforAI.size() == 0)
+            throw new CommonException(ErrorCode.NOT_FOUND_HISTORY);
 
         List<FoodAIDto> userlogs = userlogsforAI.stream()
                 .map(FoodAIDto::fromFoodAIInfo)
                 .collect(Collectors.toList());
-
-        log.info("로그들");
-        log.info(userlogs.toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject body = new JSONObject();
         body.put("userlogs", userlogs);
 
-        log.info("바디");
-        log.info(body.toJSONString());
 
         HttpEntity<?> request = new HttpEntity<String>(body.toJSONString(), headers);
 
@@ -157,19 +151,17 @@ public class FoodService {
                 String.class
         );
 
-        JsonArray foodIds = (JsonArray) JsonParser.parseString(response.getBody()).getAsJsonObject().get("foodlist");
-        log.info("결과 전");
-        log.info(foodIds.toString());
+        JsonArray foods = (JsonArray) JsonParser.parseString(response.getBody()).getAsJsonObject().get("foodlist");
 
-        List<Long> list = new ArrayList<>();
-        log.info("결과");
-        for (JsonElement foodIdElement : foodIds) {
-            Long foodId = foodIdElement.getAsLong();
-            log.info(foodId.toString());
-            list.add(foodId);
+        List<FoodAIDto> foodList = new ArrayList<>();
+        for (JsonElement foodElement : foods) {
+            Long foodId = foodElement.getAsJsonObject().get("foodId").getAsLong();
+            String name = foodElement.getAsJsonObject().get("name").getAsString();
+            String category = foodElement.getAsJsonObject().get("category").getAsString();
+            foodList.add(new FoodAIDto(foodId.intValue(), name, category));
         }
 
-        return Boolean.TRUE;
+        return foodList;
     }
 
 }
