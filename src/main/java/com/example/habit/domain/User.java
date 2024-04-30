@@ -60,6 +60,11 @@ public class User {
     @Column(name = "weight")
     private int weight;
 
+    /* User Essential Nutrients Info */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_essential_nutrients_id")
+    private UserEssentialNutrients userEssentialNutrients;
+
     // 1:N
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
@@ -77,12 +82,13 @@ public class User {
         this.role = role;
     }
 
-    public void register(RegisterRequestDto registerRequestDto) {
+    public void register(RegisterRequestDto registerRequestDto, UserEssentialNutrients userEssentialNutrients) {
         this.age = registerRequestDto.age();
         this.eGender = registerRequestDto.gender();
         this.nickname = registerRequestDto.nickname();
         this.height = registerRequestDto.height();
         this.weight = registerRequestDto.weight();
+        this.userEssentialNutrients = userEssentialNutrients;
     }
 
 }
