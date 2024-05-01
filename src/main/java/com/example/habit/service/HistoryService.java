@@ -8,6 +8,7 @@ import com.example.habit.exception.CommonException;
 import com.example.habit.exception.ErrorCode;
 import com.example.habit.repository.HistoryRepository;
 import com.example.habit.repository.UserRepository;
+import com.example.habit.type.EDateRange;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +28,28 @@ public class HistoryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserEssentialNutritionListDto getList(Long userId) {
+    public UserEssentialNutritionListDto getList(Long userId, EDateRange dateRange) {
         User user = userRepository.findByIdWithUserEssentialNutrients(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-        List<History> histories = historyRepository.findAllByUser(user);
+
+        LocalDate today = LocalDate.now();
+        switch (dateRange) {
+            case DAY:
+                break;
+            case WEEK:
+                today = today.minusDays(7);
+                break;
+            case MONTH:
+                today = today.minusDays(31);
+                break;
+            default:
+                throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+
+        List<History> histories = historyRepository.findAllByUserAndAteDateTimeBetween(user, startOfDay, endOfDay);
 
         HashMap<LocalDate, List<History>> historyMap = new HashMap<>();
 
@@ -64,7 +86,6 @@ public class HistoryService {
     public UserEssentialNutritionDto getList(Long userId, LocalDate date) {
         User user = userRepository.findByIdWithUserEssentialNutrients(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
         List<History> histories = historyRepository.findAllByUserAndAteDateTimeBetween(user, startOfDay, endOfDay);

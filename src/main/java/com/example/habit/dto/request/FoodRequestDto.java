@@ -1,4 +1,6 @@
 package com.example.habit.dto.request;
 
-public record FoodRequestDto (Long foodId) {
+import com.example.habit.type.ETime;
+
+public record FoodRequestDto (Long foodId, ETime time) {
 }
