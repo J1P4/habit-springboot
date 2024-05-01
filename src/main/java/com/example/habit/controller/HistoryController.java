@@ -6,6 +6,7 @@ import com.example.habit.dto.ResponseDto;
 import com.example.habit.dto.request.HistoryRequestDto;
 import com.example.habit.service.HistoryService;
 import com.example.habit.type.EDateRange;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class HistoryController {
 
 
     @PatchMapping("")
-    public ResponseDto<?> update(@UserId Long userId,@RequestBody HistoryRequestDto historyRequestDto) {
+    public ResponseDto<?> update(@UserId Long userId,@RequestBody @Valid HistoryRequestDto historyRequestDto) {
         return ResponseDto.ok(historyService.update(userId, historyRequestDto));
     }
 
