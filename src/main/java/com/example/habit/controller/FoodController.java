@@ -32,16 +32,13 @@ public class FoodController {
 
     //
     @GetMapping("/recommend/nutrient")
-    public ResponseDto<?> getRecommendFoodList(@UserId Long userId) {
+    public ResponseDto<?> getFoodListWithNutrient(@UserId Long userId) {
         return ResponseDto.ok(foodService.getFoodListWithNutrient(userId));
     }
 
-//    @GetMapping("/recommend/ai")
-//    public ResponseDto<?> getRecommendFoodList(@UserId Long userId) {
-//        return ResponseDto.ok(foodService.getRecommendFoodList(userId));
-//    }
-
-
-
+    @GetMapping("/recommend/ai")
+    public ResponseDto<?> getRecommendFoodList(@UserId Long userId) {
+        return ResponseDto.ok(foodService.getRecommendFoodList(userId));
+    }
 
 }
