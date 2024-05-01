@@ -12,6 +12,7 @@ import com.example.habit.exception.ErrorCode;
 import com.example.habit.repository.FoodRepository;
 import com.example.habit.repository.HistoryRepository;
 import com.example.habit.repository.UserRepository;
+import com.example.habit.type.ETime;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -62,7 +63,7 @@ public class FoodService {
     }
 
     @Transactional
-    public Boolean addFood(Long foodId, Long userId) {
+    public Boolean addFood(Long foodId, Long userId, ETime time) {
         Food food = foodRepository.findById(foodId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_FOOD));
         User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
 
@@ -86,6 +87,7 @@ public class FoodService {
                 .vitaminC(food.getVitaminC())
                 .food(food)
                 .user(user)
+                .time(time)
                 .build();
 
         historyRepository.save(history);
