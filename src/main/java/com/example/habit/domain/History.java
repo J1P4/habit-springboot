@@ -1,6 +1,7 @@
 package com.example.habit.domain;
 
 import com.example.habit.dto.request.HistoryRequestDto;
+import com.example.habit.type.ETime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -76,6 +76,10 @@ public class History {
     @Column(name = "ate_date", nullable = false, updatable = false)
     private LocalDateTime ateDate = LocalDateTime.now();
 
+    @Column(name = "time")
+    @Enumerated(EnumType.STRING)
+    private ETime time;
+
     /* Food Info */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id")
@@ -90,7 +94,7 @@ public class History {
     public History(String classification, String detailClassification, float energy, float moisture, float protein,
                    float fat, float carbohydrate, float dietaryFiber, float calcium, float iron, float phosphorus,
                    float selenium, float sodium, float vitaminA, float vitaminB1, float vitaminB2, float vitaminC,
-                   Food food, User user) {
+                   Food food, User user, ETime time) {
         this.classification = classification;
         this.detailClassification = detailClassification;
         this.energy = energy;
@@ -110,24 +114,55 @@ public class History {
         this.vitaminC = vitaminC;
         this.food = food;
         this.user = user;
+        this.time = time;
     }
 
     public void update(HistoryRequestDto historyRequestDto) {
-        this.energy = historyRequestDto.energy();
-        this.moisture = historyRequestDto.moisture();
-        this.protein = historyRequestDto.protein();
-        this.fat = historyRequestDto.fat();
-        this.carbohydrate = historyRequestDto.carbohydrate();
-        this.dietaryFiber = historyRequestDto.dietaryFiber();
-        this.calcium = historyRequestDto.calcium();
-        this.iron = historyRequestDto.iron();
-        this.phosphorus = historyRequestDto.phosphorus();
-        this.selenium = historyRequestDto.selenium();
-        this.sodium = historyRequestDto.sodium();
-        this.vitaminA = historyRequestDto.vitaminA();
-        this.vitaminB1 = historyRequestDto.vitaminB1();
-        this.vitaminB2 = historyRequestDto.vitaminB2();
-        this.vitaminC = historyRequestDto.vitaminC();
+        if (historyRequestDto.energy() != 0){
+            this.energy = historyRequestDto.energy();
+        }
+        if (historyRequestDto.moisture() != 0){
+            this.moisture = historyRequestDto.moisture();
+        }
+        if (historyRequestDto.protein() != 0){
+            this.protein = historyRequestDto.protein();
+        }
+        if (historyRequestDto.fat() != 0){
+            this.fat = historyRequestDto.fat();
+        }
+        if (historyRequestDto.carbohydrate() != 0){
+            this.carbohydrate = historyRequestDto.carbohydrate();
+        }
+        if (historyRequestDto.dietaryFiber() != 0){
+            this.dietaryFiber = historyRequestDto.dietaryFiber();
+        }
+        if (historyRequestDto.calcium() != 0){
+            this.calcium = historyRequestDto.calcium();
+        }
+        if (historyRequestDto.iron() != 0){
+            this.iron = historyRequestDto.iron();
+        }
+        if (historyRequestDto.phosphorus() != 0){
+            this.phosphorus = historyRequestDto.phosphorus();
+        }
+        if (historyRequestDto.selenium() != 0){
+            this.selenium = historyRequestDto.selenium();
+        }
+        if (historyRequestDto.sodium() != 0){
+            this.sodium = historyRequestDto.sodium();
+        }
+        if (historyRequestDto.vitaminA() != 0){
+            this.vitaminA = historyRequestDto.vitaminA();
+        }
+        if (historyRequestDto.vitaminB1() != 0){
+            this.vitaminB1 = historyRequestDto.vitaminB1();
+        }
+        if (historyRequestDto.vitaminB2() != 0){
+            this.vitaminB2 = historyRequestDto.vitaminB2();
+        }
+        if (historyRequestDto.vitaminC() != 0){
+            this.vitaminC = historyRequestDto.vitaminC();
+        }
     }
 
     public static History getZeroHistory() {
@@ -147,6 +182,7 @@ public class History {
                 .vitaminB2(0)
                 .vitaminC(0)
                 .food(new Food())
+                .time(ETime.NONE)
                 .build();
     }
 
