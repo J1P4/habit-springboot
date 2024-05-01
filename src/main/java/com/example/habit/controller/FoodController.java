@@ -30,10 +30,18 @@ public class FoodController {
         return ResponseDto.ok(foodService.addFood(foodRequestDto.foodId(), userId, foodRequestDto.time()));
     }
 
-    @GetMapping("/recommend")
+    //
+    @GetMapping("/recommend/nutrient")
     public ResponseDto<?> getRecommendFoodList(@UserId Long userId) {
-        return ResponseDto.ok(foodService.getRecommendFoodList(userId));
+        return ResponseDto.ok(foodService.getFoodListWithNutrient(userId));
     }
+
+//    @GetMapping("/recommend/ai")
+//    public ResponseDto<?> getRecommendFoodList(@UserId Long userId) {
+//        return ResponseDto.ok(foodService.getRecommendFoodList(userId));
+//    }
+
+
 
 
 }

@@ -30,10 +30,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -57,11 +54,10 @@ public class FoodService {
             return new ArrayList<>();
         } else {
             Page<Food> foodPage = foodRepository.findByNameContaining(keyword, pageable);
-            List<FoodDto> foodDtoList = foodPage.stream()
+
+            return foodPage.stream()
                     .map(FoodDto::fromEntity)
                     .collect(Collectors.toList());
-
-            return foodDtoList;
         }
 
     }
@@ -101,37 +97,47 @@ public class FoodService {
 
     //부족한 영양분에 맞는 음식 리스트
     @Transactional
-    public List<FoodsForNutrient> getFoodListWithNutrient(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+    public Map<String, Object> getFoodListWithNutrient(Long userId) {
+        User user = userRepository.findByIdWithUserEssentialNutrients(userId)
+                .orElseThrow(() ->
+                        new CommonException(ErrorCode.NOT_FOUND_USER));
         LocalDate now = LocalDate.now();
 
         FoodNutrientSumDto sumOfNutrient = historyRepository.findSumNutrientByUserAndAteDate(user, now);
 
         List<FoodsForNutrient> foodList = null;
 
-        if (sumOfNutrient.carbohydrate() + sumOfNutrient.protein() + sumOfNutrient.fat() > 0) { //로그 존재하면 영양분에 맞게 10개
-            //사용자 성별, 키, 몸무게에 맞는 필요영양분에서 사용자가 섭취한 영양분을 뺀다.
-            foodList = foodRepository.findFoodsByNutrient(sumOfNutrient.carbohydrate(), sumOfNutrient.protein(), sumOfNutrient.fat());
-        }
-        if (foodList == null || foodList.size() == 0) //로그가 없거나 추천을 못했으면 랜덤으로 10개
-            foodList = foodRepository.findFoodbyRandom();
+        FoodNutrientSumDto subtractNutrition = new FoodNutrientSumDto(
+                user.getUserEssentialNutrients().getCarbohydrate() - sumOfNutrient.carbohydrate(),
+                user.getUserEssentialNutrients().getProtein() - sumOfNutrient.protein(),
+                user.getUserEssentialNutrients().getFat() - sumOfNutrient.fat());
 
-        return foodList;
+        if (sumOfNutrient.carbohydrate() + sumOfNutrient.protein() + sumOfNutrient.fat() > 0) {
+            foodList = foodRepository.findFoodsByNutrient(subtractNutrition.carbohydrate(), subtractNutrition.protein(), subtractNutrition.fat());
+        } if (foodList == null || foodList.isEmpty()) {
+            foodList = foodRepository.findFoodByRandom();
+        }
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("deficientNutrient", subtractNutrition);
+        result.put("foodList", foodList);
+
+        return result;
     }
 
-    //AI 이용한 음식 추천
-
+    /// AI 이용한 음식 추천
     @Transactional
     public Map<String,List<FoodAIDto>> getRecommendFoodList(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        User user = userRepository.findByIdWithUserEssentialNutrients(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
         LocalDate now = LocalDate.now();
 
-        //로그 없는 경우 해야함
-
-        //사용자가 오늘 먹은 음식 리스트
+        /*** 사용자가 오늘 먹은 음식 리스트 */
         List<HistoryRepository.FoodAIInfo> userlogsforAI = historyRepository.findFoodByUserAndAteDate(user.getId(), now);
 
-        if (userlogsforAI.size() == 0)
+        //로그 없는 경우 해야함
+        if (userlogsforAI.isEmpty())
             throw new CommonException(ErrorCode.NOT_FOUND_HISTORY);
 
         List<FoodAIDto> userlogs = userlogsforAI.stream()
