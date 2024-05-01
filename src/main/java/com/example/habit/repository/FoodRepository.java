@@ -29,5 +29,5 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
             "FROM Food f " +
             "ORDER BY RAND() " +
             "LIMIT 10")
-    List<FoodsForNutrient> findFoodbyRandom();
+    List<FoodsForNutrient> findFoodByRandom();
 }
