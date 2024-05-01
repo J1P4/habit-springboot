@@ -3,8 +3,7 @@ package com.example.habit.service;
 import com.example.habit.domain.History;
 import com.example.habit.domain.User;
 import com.example.habit.dto.request.HistoryRequestDto;
-import com.example.habit.dto.response.HistoriesDto;
-import com.example.habit.dto.response.HistoryDto;
+import com.example.habit.dto.response.*;
 import com.example.habit.exception.CommonException;
 import com.example.habit.exception.ErrorCode;
 import com.example.habit.repository.HistoryRepository;
@@ -16,10 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +24,9 @@ public class HistoryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public List<HistoriesDto> getList(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+    public UserEssentialNutritionListDto getList(Long userId) {
+        User user = userRepository.findByIdWithUserEssentialNutrients(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
         List<History> histories = historyRepository.findAllByUser(user);
 
         HashMap<LocalDate, List<History>> historyMap = new HashMap<>();
@@ -60,12 +57,13 @@ public class HistoryService {
             historyDtos.add(new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList));
         }
 
-        return historyDtos;
+        return new UserEssentialNutritionListDto(EssentialNutritionDto.fromEntity(user.getUserEssentialNutrients()), historyDtos);
     }
 
     @Transactional
-    public HistoriesDto getList(Long userId, LocalDate date) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+    public UserEssentialNutritionDto getList(Long userId, LocalDate date) {
+        User user = userRepository.findByIdWithUserEssentialNutrients(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
@@ -80,9 +78,10 @@ public class HistoryService {
             total.plus(history);
         }
 
-        HistoriesDto historiesDto = new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList);
-
-        return historiesDto;
+        return new UserEssentialNutritionDto(
+                EssentialNutritionDto.fromEntity(user.getUserEssentialNutrients()),
+                new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList)
+        );
     }
 
     @Transactional
