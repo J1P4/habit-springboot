@@ -27,7 +27,7 @@ public class FoodController {
 
     @PostMapping("")
     public ResponseDto<?> addFood(@UserId Long userId, @RequestBody FoodRequestDto foodRequestDto) {
-        return ResponseDto.ok(foodService.addFood(foodRequestDto.foodId(), userId));
+        return ResponseDto.ok(foodService.addFood(foodRequestDto.foodId(), userId, foodRequestDto.time()));
     }
 
     @GetMapping("/recommend")
