@@ -6,7 +6,7 @@ public record HistoryDto(float energy, float protein, float fat,
                          float carbohydrate, float dietaryFiber, float calcium,
                          float iron, float phosphorus, float selenium, float sodium,
                          float vitaminA, float vitaminB1, float vitaminB2, float vitaminC,
-                         String foodName) {
+                         String foodName,String time) {
     public static HistoryDto fromEntity(History history) {
         return new HistoryDto(
                 history.getEnergy(),
@@ -23,7 +23,8 @@ public record HistoryDto(float energy, float protein, float fat,
                 history.getVitaminB1(),
                 history.getVitaminB2(),
                 history.getVitaminC(),
-                history.getFood().getName()
+                history.getFood().getName(),
+                history.getTime().name()
         );
     }
 }
