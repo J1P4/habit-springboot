@@ -103,18 +103,26 @@ public class FoodService {
                         new CommonException(ErrorCode.NOT_FOUND_USER));
         LocalDate now = LocalDate.now();
 
-        FoodNutrientSumDto sumOfNutrient = historyRepository.findSumNutrientByUserAndAteDate(user, now);
+        HistoryRepository.FoodNutrientSumDto sumOfNutrient = historyRepository.findSumNutrientByUserAndAteDate(user.getId(), now);
+
+        //사용자 로그 없으면 null 리턴
+        if (sumOfNutrient == null) {
+            return null;
+        }
 
         List<FoodsForNutrient> foodList = null;
 
         FoodNutrientSumDto subtractNutrition = new FoodNutrientSumDto(
-                user.getUserEssentialNutrients().getCarbohydrate() - sumOfNutrient.carbohydrate(),
-                user.getUserEssentialNutrients().getProtein() - sumOfNutrient.protein(),
-                user.getUserEssentialNutrients().getFat() - sumOfNutrient.fat());
+                user.getUserEssentialNutrients().getCarbohydrate() - sumOfNutrient.getCarbohydrate(),
+                user.getUserEssentialNutrients().getProtein() - sumOfNutrient.getProtein(),
+                user.getUserEssentialNutrients().getFat() - sumOfNutrient.getFat());
 
-        if (sumOfNutrient.carbohydrate() + sumOfNutrient.protein() + sumOfNutrient.fat() > 0) {
+        if (sumOfNutrient.getCarbohydrate() + sumOfNutrient.getProtein() + sumOfNutrient.getFat() > 0) {
             foodList = foodRepository.findFoodsByNutrient(subtractNutrition.carbohydrate(), subtractNutrition.protein(), subtractNutrition.fat());
-        } if (foodList == null || foodList.isEmpty()) {
+        }
+
+        //로그는 있지만 영양소를 만족하는 음식들이 없다면 랜덤 10개
+        if (foodList == null || foodList.isEmpty()) {
             foodList = foodRepository.findFoodByRandom();
         }
 
@@ -128,7 +136,7 @@ public class FoodService {
 
     /// AI 이용한 음식 추천
     @Transactional
-    public Map<String,List<FoodAIDto>> getRecommendFoodList(Long userId) {
+    public Map<String, List<FoodAIDto>> getRecommendFoodList(Long userId) {
         User user = userRepository.findByIdWithUserEssentialNutrients(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
         LocalDate now = LocalDate.now();
@@ -168,8 +176,8 @@ public class FoodService {
             String category = foodElement.getAsJsonObject().get("category").getAsString();
             foodList.add(new FoodAIDto(foodId.intValue(), name, category));
         }
-        Map<String,List<FoodAIDto>> map = new HashMap<>();
-        map.put("foodlist",foodList);
+        Map<String, List<FoodAIDto>> map = new HashMap<>();
+        map.put("foodlist", foodList);
 
         return map;
     }

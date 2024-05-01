@@ -2,7 +2,6 @@ package com.example.habit.repository;
 
 import com.example.habit.domain.History;
 import com.example.habit.domain.User;
-import com.example.habit.dto.response.FoodAIDto;
 import com.example.habit.dto.response.FoodNutrientSumDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,10 +19,17 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
     @Query("SELECT h FROM History h WHERE h.user = :user AND h.ateDate BETWEEN :startDate AND :endDate")
     List<History> findAllByUserAndAteDateTimeBetween(@Param("user") User user, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT SUM(h.carbohydrate), SUM(h.protein), SUM(h.fat) FROM History h " +
-            "WHERE h.user = :user AND FUNCTION('DATE', h.ateDate) = :ateDate " +
-            "group by h.user, FUNCTION('DATE', h.ateDate)")
-    FoodNutrientSumDto findSumNutrientByUserAndAteDate(@Param("user") User user, @Param("ateDate") LocalDate ateDate);
+    @Query(value = "SELECT CAST(SUM(h.carbohydrate) as float) as Carbohydrate, CAST(SUM(h.protein) as float) as Protein, CAST(SUM(h.fat) as float) as Fat " +
+            "FROM histories h " +
+            "WHERE h.user_id = :userId AND DATE_FORMAT(h.ate_date, '%Y-%m-%d') = :ateDate " +
+            "GROUP BY DATE_FORMAT(h.ate_date, '%Y-%m-%d')", nativeQuery = true)
+    FoodNutrientSumDto findSumNutrientByUserAndAteDate(@Param("userId") Long userId, @Param("ateDate") LocalDate ateDate);
+
+    interface FoodNutrientSumDto {
+        float getCarbohydrate();
+        float getProtein();
+        float getFat();
+    }
 
     @Query(value = "SELECT h.food_id as FoodId, f.name as Name, f.detail_classification as DetailClassification FROM histories h " +
             "Inner JOIN foods f ON h.food_id = f.id " +
@@ -32,7 +38,9 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
 
     interface FoodAIInfo {
         int getFoodId();
+
         String getName();
+
         String getDetailClassification();
     }
 }
