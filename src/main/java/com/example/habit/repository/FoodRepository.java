@@ -16,7 +16,7 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
 
     Page<Food> findByNameContaining(String foodName, Pageable pageable);
 
-    @Query("SELECT f.id, f.name " +
+    @Query("SELECT new com.example.habit.dto.response.FoodsForNutrient(f.id, f.name) " +
             "FROM Food f " +
             "WHERE f.carbohydrate > :carbohydrate OR f.protein > :protein OR f.fat > :fat " +
             "ORDER BY (CASE WHEN f.carbohydrate > :carbohydrate THEN 1 ELSE 0 END + " +
