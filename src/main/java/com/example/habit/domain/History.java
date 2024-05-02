@@ -85,6 +85,11 @@ public class History {
     @JoinColumn(name = "food_id")
     private Food food;
 
+    /* User Info */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Builder
     public History(String classification, String detailClassification, float energy, float moisture, float protein,
                    float fat, float carbohydrate, float dietaryFiber, float calcium, float iron, float phosphorus,
@@ -111,11 +116,6 @@ public class History {
         this.user = user;
         this.time = time;
     }
-
-    /* User Info */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
 
     public void update(HistoryRequestDto historyRequestDto) {
         if (historyRequestDto.energy() != 0){
