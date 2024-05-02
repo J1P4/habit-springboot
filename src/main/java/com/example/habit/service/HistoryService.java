@@ -80,7 +80,7 @@ public class HistoryService {
         return new UserEssentialNutritionListDto(
                 EssentialNutritionDto.fromEntity(
                         user.getUserEssentialNutrients(),
-                        (float) (ChronoUnit.DAYS.between(today, LocalDate.now()))
+                        (float) (ChronoUnit.DAYS.between(today, LocalDate.now()) + 1)
                 ),
                 historyDtos,
                 HistoryDto.fromEntity(allTotal)
