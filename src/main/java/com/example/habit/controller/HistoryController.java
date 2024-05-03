@@ -28,6 +28,11 @@ public class HistoryController {
         return ResponseDto.ok(historyService.getList(userId, LocalDate.parse(date)));
     }
 
+    @GetMapping("/specific/{historyId}")
+    public ResponseDto<?> get(@UserId Long userId, @PathVariable("historyId") Long historyId) {
+        return ResponseDto.ok(historyService.get(userId, historyId));
+    }
+
 
     @PatchMapping("")
     public ResponseDto<?> update(@UserId Long userId,@RequestBody @Valid HistoryRequestDto historyRequestDto) {
