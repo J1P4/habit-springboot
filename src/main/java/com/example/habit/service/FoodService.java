@@ -3,10 +3,7 @@ package com.example.habit.service;
 import com.example.habit.domain.Food;
 import com.example.habit.domain.History;
 import com.example.habit.domain.User;
-import com.example.habit.dto.response.FoodAIDto;
-import com.example.habit.dto.response.FoodDto;
-import com.example.habit.dto.response.FoodNutrientSumDto;
-import com.example.habit.dto.response.FoodsForNutrient;
+import com.example.habit.dto.response.*;
 import com.example.habit.exception.CommonException;
 import com.example.habit.exception.ErrorCode;
 import com.example.habit.repository.FoodRepository;
@@ -136,10 +133,10 @@ public class FoodService {
 
     /// AI 이용한 음식 추천
     @Transactional
-    public Map<String, List<FoodAIDto>> getRecommendFoodList(Long userId) {
+    public Map<String, List<FoodAIResponseDto>> getRecommendFoodList(Long userId) {
         User user = userRepository.findByIdWithUserEssentialNutrients(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-        LocalDate now = LocalDate.now();
+        LocalDate now = LocalDate.parse("2024-05-02");
 
         /*** 사용자가 오늘 먹은 음식 리스트 */
         List<HistoryRepository.FoodAIInfo> userlogsforAI = historyRepository.findFoodByUserAndAteDate(user.getId(), now);
@@ -169,14 +166,19 @@ public class FoodService {
 
         JsonArray foods = (JsonArray) JsonParser.parseString(response.getBody()).getAsJsonObject().get("foodlist");
 
-        List<FoodAIDto> foodList = new ArrayList<>();
+        List<FoodAIResponseDto> foodList = new ArrayList<>();
         for (JsonElement foodElement : foods) {
             Long foodId = foodElement.getAsJsonObject().get("foodId").getAsLong();
             String name = foodElement.getAsJsonObject().get("name").getAsString();
             String category = foodElement.getAsJsonObject().get("category").getAsString();
-            foodList.add(new FoodAIDto(foodId.intValue(), name, category));
+            Float moisture = foodElement.getAsJsonObject().get("moisture").getAsFloat();
+            Float carbohydrate = foodElement.getAsJsonObject().get("carbohydrate").getAsFloat();
+            Float protein = foodElement.getAsJsonObject().get("protein").getAsFloat();
+            Float fat = foodElement.getAsJsonObject().get("fat").getAsFloat();
+            Float kcal = foodElement.getAsJsonObject().get("kcal").getAsFloat();
+            foodList.add(new FoodAIResponseDto(foodId.intValue(), name, category, moisture, carbohydrate, protein, fat, kcal));
         }
-        Map<String, List<FoodAIDto>> map = new HashMap<>();
+        Map<String, List<FoodAIResponseDto>> map = new HashMap<>();
         map.put("foodlist", foodList);
 
         return map;
