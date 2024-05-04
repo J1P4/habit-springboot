@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,19 +32,14 @@ public class HistoryService {
     public UserEssentialNutritionListDto getList(Long userId, EDateRange dateRange) {
         User user = userRepository.findByIdWithUserEssentialNutrients(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-
         LocalDate today = LocalDate.now();
+
         switch (dateRange) {
-            case DAY:
-                break;
-            case WEEK:
-                today = today.minusDays(7);
-                break;
-            case MONTH:
-                today = today.minusDays(31);
-                break;
-            default:
-                throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+            case DAY -> {
+            }
+            case WEEK -> today = today.minusDays(7);
+            case MONTH -> today = today.minusDays(today.lengthOfMonth());
+            default -> throw new CommonException(ErrorCode.INVALID_ARGUMENT);
         }
 
         LocalDateTime startOfDay = today.atStartOfDay();
@@ -65,8 +61,9 @@ public class HistoryService {
         }
 
         List<HistoriesDto> historyDtos = new ArrayList<>();
-
         Set<LocalDate> keySet = historyMap.keySet();
+        History allTotal = History.getZeroHistory();
+
         for (LocalDate date : keySet) {
             List<HistoryDto> historyList = new ArrayList<>();
             History total = History.getZeroHistory();
@@ -74,12 +71,20 @@ public class HistoryService {
             for (History history : historyMap.get(date)) {
                 historyList.add(HistoryDto.fromEntity(history));
                 total.plus(history);
+                allTotal.plus(history);
             }
 
             historyDtos.add(new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList));
         }
 
-        return new UserEssentialNutritionListDto(EssentialNutritionDto.fromEntity(user.getUserEssentialNutrients()), historyDtos);
+        return new UserEssentialNutritionListDto(
+                EssentialNutritionDto.fromEntity(
+                        user.getUserEssentialNutrients(),
+                        (float) (ChronoUnit.DAYS.between(today, LocalDate.now()) + 1)
+                ),
+                historyDtos,
+                HistoryDto.fromEntity(allTotal)
+        );
     }
 
     @Transactional
@@ -115,6 +120,15 @@ public class HistoryService {
 
 
         return Boolean.TRUE;
+    }
+
+    @Transactional
+    public HistoryDto get(Long userId, Long historyId) {
+        History history = historyRepository.findById(historyId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_HISTORY));
+        if (!history.getUser().getId().equals(userId)) {
+            throw new CommonException(ErrorCode.NOT_FOUND_HISTORY);
+        }
+        return HistoryDto.fromEntity(history);
     }
 
 
