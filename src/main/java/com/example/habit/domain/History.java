@@ -201,6 +201,7 @@ public class History {
         this.vitaminB1 += history.getVitaminB1();
         this.vitaminB2 += history.getVitaminB2();
         this.vitaminC += history.getVitaminC();
+        this.moisture += history.getMoisture();
     }
 
 }
