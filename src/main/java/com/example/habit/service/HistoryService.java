@@ -122,5 +122,14 @@ public class HistoryService {
         return Boolean.TRUE;
     }
 
+    @Transactional
+    public HistoryDto get(Long userId, Long historyId) {
+        History history = historyRepository.findById(historyId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_HISTORY));
+        if (!history.getUser().getId().equals(userId)) {
+            throw new CommonException(ErrorCode.NOT_FOUND_HISTORY);
+        }
+        return HistoryDto.fromEntity(history);
+    }
+
 
 }
