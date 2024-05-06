@@ -1,6 +1,5 @@
 package com.example.habit.domain;
 
-import com.example.habit.type.EGender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
