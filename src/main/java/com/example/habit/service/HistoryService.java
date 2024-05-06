@@ -38,7 +38,7 @@ public class HistoryService {
             case DAY -> {
             }
             case WEEK -> today = today.minusDays(7);
-            case MONTH -> today = today.minusDays(today.lengthOfMonth());
+            case MONTH -> today = today.minusMonths(1);
             default -> throw new CommonException(ErrorCode.INVALID_ARGUMENT);
         }
 

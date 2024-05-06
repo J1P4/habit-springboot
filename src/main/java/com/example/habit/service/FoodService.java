@@ -136,7 +136,7 @@ public class FoodService {
     public Map<String, List<FoodAIResponseDto>> getRecommendFoodList(Long userId) {
         User user = userRepository.findByIdWithUserEssentialNutrients(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-        LocalDate now = LocalDate.parse("2024-05-02");
+        LocalDate now = LocalDate.now();
 
         /*** 사용자가 오늘 먹은 음식 리스트 */
         List<HistoryRepository.FoodAIInfo> userlogsforAI = historyRepository.findFoodByUserAndAteDate(user.getId(), now);
