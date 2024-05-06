@@ -143,7 +143,7 @@ public class FoodService {
 
         //로그 없는 경우 해야함
         if (userlogsforAI.isEmpty())
-            throw new CommonException(ErrorCode.NOT_FOUND_HISTORY);
+            return null;
 
         List<FoodAIDto> userlogs = userlogsforAI.stream()
                 .map(FoodAIDto::fromFoodAIInfo)
