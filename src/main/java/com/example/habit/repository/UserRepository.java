@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"userEssentialNutrients.essentialNutrients"})
     @Query("SELECT u FROM User u WHERE u.id = :id")
-    Optional<User> findByIdWithUserEssentialNutrients(@Param("id")  Long Id);
+    Optional<User> findByIdWithUserEssentialNutrients(@Param("id") Long Id);
 
     interface UserSecurityForm {
 
