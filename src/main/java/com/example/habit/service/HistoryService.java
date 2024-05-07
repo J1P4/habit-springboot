@@ -105,6 +105,7 @@ public class HistoryService {
         }
 
         return new UserEssentialNutritionDto(
+                user.getNickname(),
                 EssentialNutritionDto.fromEntity(user.getUserEssentialNutrients()),
                 new HistoriesDto(date.toString(), HistoryDto.fromEntity(total), historyList)
         );

@@ -1,4 +1,4 @@
 package com.example.habit.dto.response;
 
-public record UserEssentialNutritionDto(EssentialNutritionDto essentialNutritionDto, HistoriesDto historiesDto) {
+public record UserEssentialNutritionDto(String nickname,EssentialNutritionDto essentialNutritionDto, HistoriesDto historiesDto) {
 }
