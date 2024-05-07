@@ -38,7 +38,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         JwtTokenDto jwtTokenDto = jwtUtil.generateTokens(userPrincipal.getId(), userPrincipal.getRole());
 
-        String redirectUrl = "https://habit-fe.vercel.app/redirect";
+        String redirectUrl = "http://localhost:3000/redirect";
 
         // 쿼리 문자열을 추가
         redirectUrl += "?accessToken="+jwtTokenDto.getAccessToken()+"&role="+userPrincipal.getRole();
