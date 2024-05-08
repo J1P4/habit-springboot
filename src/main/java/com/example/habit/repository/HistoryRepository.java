@@ -19,7 +19,7 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
     @Query("SELECT h FROM History h WHERE h.user = :user AND h.ateDate BETWEEN :startDate AND :endDate")
     List<History> findAllByUserAndAteDateTimeBetween(@Param("user") User user, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "SELECT CAST(SUM(h.carbohydrate) as float) as Carbohydrate, CAST(SUM(h.protein) as float) as Protein, CAST(SUM(h.fat) as float) as Fat " +
+    @Query(value = "SELECT SUM(h.carbohydrate) as Carbohydrate, SUM(h.protein) as Protein, SUM(h.fat) as Fat " +
             "FROM histories h " +
             "WHERE h.user_id = :userId AND DATE_FORMAT(h.ate_date, '%Y-%m-%d') = :ateDate " +
             "GROUP BY DATE_FORMAT(h.ate_date, '%Y-%m-%d')", nativeQuery = true)
