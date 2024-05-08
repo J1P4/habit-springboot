@@ -6,5 +6,5 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ExemplaryRestaurantRepository extends JpaRepository<ExemplaryRestaurant, Long> {
-    Slice<ExemplaryRestaurant> findByDongContaining(String dong, Pageable pageInfo);
+    Slice<ExemplaryRestaurant> findByLocationAddressContaining(String locationAddress, Pageable pageInfo);
 }
