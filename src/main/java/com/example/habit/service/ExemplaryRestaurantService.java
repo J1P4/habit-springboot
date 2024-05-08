@@ -17,14 +17,14 @@ public class ExemplaryRestaurantService {
 
     private final ExemplaryRestaurantRepository exemplaryRestaurantRepository;
 
-    public List<RestaurantDto> getRestaurantList(String dong, int pageIndex, int pageSize) {
+    public List<RestaurantDto> getRestaurantList(String locationAddress, int pageIndex, int pageSize) {
 
-        if (dong == null || dong.trim().isEmpty()) {
-            dong = "";
+        if (locationAddress == null || locationAddress.trim().isEmpty()) {
+            locationAddress = "";
         }
 
         Slice<ExemplaryRestaurant> restaurants = exemplaryRestaurantRepository
-                .findByDongContaining(dong, PageRequest.of(pageIndex, pageSize));
+                .findByLocationAddressContaining(locationAddress, PageRequest.of(pageIndex, pageSize));
 
         return restaurants.stream()
                 .map(RestaurantDto::fromEntity)
