@@ -26,6 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
+    private static final String REDIRECT_URL = "https://habit-fe.vercel.app/redirect";
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
@@ -38,7 +39,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         JwtTokenDto jwtTokenDto = jwtUtil.generateTokens(userPrincipal.getId(), userPrincipal.getRole());
 
-        String redirectUrl = "http://localhost:3000/redirect";
+        String redirectUrl = REDIRECT_URL;
 
         // 쿼리 문자열을 추가
         redirectUrl += "?accessToken="+jwtTokenDto.getAccessToken()+"&role="+userPrincipal.getRole();
