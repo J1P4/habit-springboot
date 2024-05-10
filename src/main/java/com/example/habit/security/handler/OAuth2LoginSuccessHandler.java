@@ -26,7 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
-    private static final String REDIRECT_URL = "https://habit-fe.vercel.app/redirect";
+    private static final String REDIRECT_URL = "http://localhost:3000/redirect";
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
