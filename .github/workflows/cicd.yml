@@ -34,6 +34,8 @@ jobs:
       # gradle build
       - name: Build with Gradle
         run: |
+          echo "Files in ./habit_secret directory:"
+          ls -al ./habit_secret
           chmod +x ./gradlew
           ./gradlew copyPrivate build -x test
 
