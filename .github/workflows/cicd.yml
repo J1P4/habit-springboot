@@ -41,9 +41,9 @@ jobs:
       - name: Docker build & push to prod
         if: contains(github.ref, 'master')
         run: |
-          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD}}
-          docker build -t ${{ secrets.DOCKER_REPOSITORY }} .
-          docker push ${{ secrets.DOCKER_REPOSITORY }}
+          docker login -u ${{secrets.DOCKER_USER}} -p ${{secrets.DOCKER_PASSWORD}}
+          docker build -t ${{secrets.DOCKER_REPOSITORY}} .
+          docker push ${{secrets.DOCKER_REPOSITORY}}
 
       # Deploy to prod
       - name: Deploy to prod
@@ -51,17 +51,16 @@ jobs:
         id: deploy-prod
         if: contains(github.ref, 'master')
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{secrets.HOST}}
           username: root
-          password: ${{ secrets.SSH_PASSWORD }}
+          password: ${{secrets.SSH_PASSWORD}}
           port: 2223
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{secrets.PRIVATE_KEY}}
           envs: GITHUB_SHA
           script: |
             sudo docker ps
             sudo docker stop springboot
             sudo docker rm -f springboot
-            sudo docker pull ${{ secrets.DOCKER_REPOSITORY }}
-            sudo docker run -d --name springboot ${{ secrets.DOCKER_REPOSITORY }}
+            sudo docker pull ${{secrets.DOCKER_REPOSITORY}}
+            sudo docker run -d --network host --name springboot ${{secrets.DOCKER_REPOSITORY}}
             sudo docker image prune -f
-
