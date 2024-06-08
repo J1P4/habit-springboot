@@ -57,6 +57,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+tasks.named('build'){
+    dependsOn copyPrivate
+}
+
 task copyPrivate(type: Copy) {
     copy{
         from './habit_secret'
