@@ -19,8 +19,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          submodules: 'recursive'
-          token: ${{secrets.ACTION_TOKEN}}
 
       # gradle caching - 빌드 시간 향상
       - name: Gradle Caching
@@ -32,6 +30,13 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      # Github Submodule에서 환경변수 가져오기
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.ACTION_TOKEN}}
+          submodules: true
           
 
       # gradle build
