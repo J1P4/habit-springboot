@@ -59,7 +59,7 @@ tasks.named('test') {
 
 task copyPrivate(type: Copy) {
     copy{
-        from './habit_secret'
+        from 'habit_secret'
         include "*.yml"
         into 'src/main/resources'
     }
