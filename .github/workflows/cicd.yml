@@ -19,8 +19,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          submodules: 'true'
-          token: ${{secrets.ACTION_TOKEN}}
 
       # gradle caching - 빌드 시간 향상
       - name: Gradle Caching
@@ -32,6 +30,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+          submodules: 'true'
+          token: ${{secrets.ACTION_TOKEN}}
 
       # gradle build
       - name: Build with Gradle
