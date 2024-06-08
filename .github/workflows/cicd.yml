@@ -35,7 +35,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew build -x test
+          ./gradlew copyPrivate build -x test
 
       # Docker build & push to prod
       - name: Docker build & push to prod
