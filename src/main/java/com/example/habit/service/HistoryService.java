@@ -118,7 +118,6 @@ public class HistoryService {
         history.update(historyRequestDto);
         historyRepository.save(history);
 
-
         return Boolean.TRUE;
     }
 
@@ -131,5 +130,13 @@ public class HistoryService {
         return HistoryDto.fromEntity(history);
     }
 
+    @Transactional
+    public Boolean deleteHistory(Long userId, Long historyId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        History history = historyRepository.findById(historyId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_HISTORY));
+        historyRepository.delete(history);
+
+        return Boolean.TRUE;
+    }
 
 }
