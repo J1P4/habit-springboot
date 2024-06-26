@@ -39,4 +39,9 @@ public class HistoryController {
         return ResponseDto.ok(historyService.update(userId, historyRequestDto));
     }
 
+    @DeleteMapping("/{historyId}")
+    public ResponseDto<?> delete(@UserId Long userId, @PathVariable("historyId") Long historyId) {
+        return ResponseDto.ok(historyService.deleteHistory(userId, historyId));
+    }
+
 }
