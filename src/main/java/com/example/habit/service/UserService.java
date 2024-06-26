@@ -11,6 +11,6 @@ public class UserService {
     private final UserRepository userRepository;
 
     public NicknameResponseDto getNickname(Long userId) {
-        return new NicknameResponseDto(userRepository.findById(userId).get().getNickname() + "CICD 테스트");
+        return new NicknameResponseDto(userRepository.findById(userId).get().getNickname());
     }
 }
